@@ -24,7 +24,7 @@ pip install maturin
 - Finally, clone this repo:
 
 ```bash
-git clone <repo-addr>
+git clone git@github.com:awegsche/pyrgtpsa.git
 ```
 
 - Go into the cloned folder and build and install `pyrgtpsa`:
