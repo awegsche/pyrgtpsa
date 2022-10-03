@@ -12,10 +12,10 @@ They are used among others in simulation codes for particle accelerators like PT
 
 ## Installation
 
-- First, you need to install `rustc` as `rgtpsa` is a rust package, follow the steps on the 
+- First, you need to install the Rust toolchain, because `rgtpsa` is a Rust package. Follow the steps on the 
 [rust website](https://www.rust-lang.org/tools/install).
 
-- then, you need `maturin` to create the python bindings and install the package:
+- Then, you need `maturin` to create the python bindings and install the package:
 
 ```bash
 pip install maturin
