@@ -1,8 +1,8 @@
 # PyRGTPSA
 
-Python bindings to `rgtpsa`, a Generalised Truncated Power Series Algebra package.
+Python bindings to [`rgtpsa`](https://github.com/awegsche/rgtpsa), a Generalised Truncated Power Series Algebra package.
 
-**Note**: this is still WIP
+**Note**: this is still WIP.
 
 ## Introduction
 
@@ -60,6 +60,10 @@ x^2 =
   0 |    4.0000000000000e0 |  0  0  0  0  0  0 |  0
 ```
 
+**Warning:** please note, that for now, only `Float`s are working in the constructor of `TpsaND`,
+all other types (including integers) are truncated from the array, often resulting in quite a mess.
+I will addresss this soon.
+
 ## The fun part
 
 Now, calculating `2*2` is not that exciting, let's take a look at the `sin` function:
@@ -101,6 +105,8 @@ def my_sin(tpsa):
 print(f"sin(pi/2) =\n{phi.sin()}")
 print(f"my_sin(pi/2) =\n{my_sin(phi)}")
 ```
+
+(_note_ that the calculation order `range(1,10)` is arbitrary here and should be adapted according to the order of the Tpsa)
 
 and, running it, should yield:
 
