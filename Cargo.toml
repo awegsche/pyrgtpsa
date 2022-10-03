@@ -1,0 +1,15 @@
+[package]
+name = "pyrgtpsa"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "pyrgtpsa"
+crate-type = ["cdylib"]
+
+[dependencies]
+rgtpsa = { git = "https://github.com/awegsche/rgtpsa.git" }
+
+[dependencies.pyo3]
+version = "*"
+features = ["extension-module", "abi3-py38"]
