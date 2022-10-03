@@ -60,7 +60,7 @@ x^2 =
 ```
 
 **Warning:** please note that for now, only `Float`s are working in the constructor of `TpsaND`,
-all other types (including `Int`) will through an error.
+all other types (including `Int`) will throw an error.
 
 ## The fun part
 
