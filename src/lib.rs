@@ -1,10 +1,12 @@
 use std::fmt::Display;
 
 use rgtpsa::tpsa::TPSA;
-use pyo3::exceptions::PyArithmeticError;
+use pyo3::exceptions::{PyArithmeticError, PyValueError};
 use pyo3::prelude::*;
 use pyo3::types::{PyFloat, PyList};
 
+/// creates a precompiled TPSA type 
+/// This macro basically exposes all TPSA functions to python.
 macro_rules! make_py_tpsa {
     ($name:ident, $nv:literal, $mo:literal) => {
         #[pyclass]
@@ -19,8 +21,9 @@ macro_rules! make_py_tpsa {
             fn new(l: &PyList) -> PyResult<Self> {
                 let coeffs: Vec<_> = l
                     .iter()
-                    .filter_map(|x| x.cast_as::<PyFloat>().ok())
-                    .map(|x| x.value())
+                    .map(|x| {
+                        x.cast_as::<PyFloat>().expect("Tpsa should be created from floats").value()
+                    })
                     .collect();
 
                 Ok(Self {
@@ -38,7 +41,7 @@ macro_rules! make_py_tpsa {
             }
 
             fn __add__(&self, other: &Self) -> Self {
-                $name{inner: &self.inner + &other.inner}
+                Self{inner: &self.inner + &other.inner}
             }
 
             fn __iadd__(&mut self, other: &Self) {
@@ -56,7 +59,15 @@ macro_rules! make_py_tpsa {
             }
 
             fn sin(&self) -> Self {
-                $name{inner: self.inner.sin()}
+                Self{inner: self.inner.sin()}
+            }
+
+            fn cos(&self) -> Self {
+                Self{inner: self.inner.cos()}
+            }
+
+            fn exp(&self) -> Self {
+                Self{inner: self.inner.exp()}
             }
         }
 
@@ -68,13 +79,37 @@ macro_rules! make_py_tpsa {
     };
 }
 
-make_py_tpsa!(Tpsa6D, 6, 4);
-make_py_tpsa!(Tpsa4D, 4, 4);
+/// This macro assembles the python module, put all your Tpsa definitions in here
+///
+/// # Example
+/// ```
+/// assemble_module![
+///     [Tpsa6D4, 6, 4];
+///     [Tpsa6D4, 4, 4];
+/// ]
+/// ```
+/// will create two precompiled Tpsa types, one with 6 variables and order 4 and
+/// the second one with 4 variables and order 4
+macro_rules! assemble_module {
+    [$([$name:ident, $nv:literal, $mo:literal]);+] => {
+        $(make_py_tpsa![$name, $nv, $mo]);+;
+        
+        #[pymodule]
+        fn pyrgtpsa(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
+            $(m.add_class::<$name>()?);+;
 
-#[pymodule]
-fn pyrgtpsa(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
-    m.add_class::<Tpsa6D>()?;
-    m.add_class::<Tpsa4D>()?;
-
-    Ok(())
+            Ok(())
+        }
+    };
 }
+
+// finally call the assemble macro, which creates the python module
+assemble_module![
+    [Tpsa6D4, 6, 4];
+    [Tpsa4D4, 4, 4];
+    [Tpsa2D4, 2, 4];
+    [Tpsa6D8, 6, 8];
+    [Tpsa4D8, 4, 8];
+    [Tpsa2D8, 2, 8]
+];
+
